@@ -1,0 +1,57 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:promise/recommended"
+    ],
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".css"]
+            }
+        }
+    },
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "babelOptions": {
+            "configFile": "./babel.config.json"
+        },
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": ["prettier", "react", "promise"],
+    "rules": {
+        "prettier/prettier": ["error"],
+        "max-len": [
+            "error",
+            {
+                "code": 130,
+                "ignoreUrls": true,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true
+            }
+        ],
+        "brace-style": ["error", "1tbs"],
+        "no-unused-vars": ["error"],
+        "no-var": ["error"],
+        "prefer-const": ["error"],
+        "eqeqeq": ["error", "always"],
+        "promise/catch-or-return": [
+            "error",
+            {
+                "allowFinally": true
+            }
+        ],
+        "promise/always-return": "off"
+    }
+}
