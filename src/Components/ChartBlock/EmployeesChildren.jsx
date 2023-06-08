@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { CgArrowTopRightR } from 'react-icons/cg'
+import userPhotoDefault from '../../../public/additions/userDefault.jpeg'
 
-export const EmployeesChildren = ({ initialValue = false, pageSize = 6, employeesChildren, isHeightsCalculated }) => {
+export const EmployeesChildren = ({ initialValue = false, pageSize = 4, employeesChildren, isHeightsCalculated }) => {
     const [isExpanded, setIsExpanded] = useState(initialValue)
     const [pageViewIndex, setPageViewIndex] = useState(1)
 
@@ -20,7 +20,7 @@ export const EmployeesChildren = ({ initialValue = false, pageSize = 6, employee
         }
     }, [employeesChildren])
 
-    const userPhotoDefaultUrl = `${process.env.SITE_URL}${process.env.USER_PHOTO_DEFAULT_URL}`
+    const userPhotoDefaultUrl = userPhotoDefault
 
     const userPhotoUrl = (item) => {
         if (item.photoUrl) {
@@ -31,12 +31,8 @@ export const EmployeesChildren = ({ initialValue = false, pageSize = 6, employee
         return userPhotoDefaultUrl
     }
 
-    const handleExpandClick = () => {
-        setIsExpanded(true)
-    }
-
-    const handleCollapseClick = () => {
-        setIsExpanded(false)
+    const handleToggleClick = () => {
+        setIsExpanded((prev) => !prev)
     }
 
     const employeesPagination = () => {
@@ -64,12 +60,6 @@ export const EmployeesChildren = ({ initialValue = false, pageSize = 6, employee
                     <div
                         className={`employee-container ${employee.isSearchResultItem ? 'search-result-item' : ''}`}
                         key={employee.id}
-                        onClick={() => {
-                            if (!employee.hideFromPhoneBook) {
-                                window.open(`${process.env.SITE_URL}/SitePages/My-Profile.aspx?userId=${employee.idSp}`, '_blank')
-                                return false
-                            }
-                        }}
                     >
                         <div
                             className='employee-department-city-color-line'
@@ -106,13 +96,10 @@ export const EmployeesChildren = ({ initialValue = false, pageSize = 6, employee
 
     return (
         <div>
-            <div className='employees-container' onClick={handleExpandClick}>
+            <div className='employees-container' onClick={handleToggleClick}>
                 {isExpanded && isHeightsCalculated ? mapExpandedEmployeesChildren() : mapClosedEmployeesChildren()}
             </div>
             {isExpanded && employeesChildren.length > pageSize && employeesPagination()}
-            <div className={`employees-toggle-button ${isExpanded ? 'active' : ''}`}>
-                {isExpanded && <CgArrowTopRightR onClick={handleCollapseClick} />}
-            </div>
         </div>
     )
 }

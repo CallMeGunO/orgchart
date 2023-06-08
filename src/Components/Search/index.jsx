@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { CgClose } from 'react-icons/cg'
 import chartDataHelper from '../../core/helpers/chartDataHelper'
+import userPhotoDefault from '../../../public/additions/userDefault.jpeg'
 
 const Search = ({
     searchValue,
@@ -16,7 +17,7 @@ const Search = ({
     const [searchResults, setSearchResults] = useState([])
     const [filterBranchTitle, setFilterBranchTitle] = useState('')
 
-    const userPhotoDefaultUrl = `${process.env.SITE_URL}${process.env.USER_PHOTO_DEFAULT_URL}`
+    const userPhotoDefaultUrl = userPhotoDefault
 
     const userPhotoUrl = (item) => {
         if (item.photoUrl) {
@@ -194,7 +195,7 @@ const Search = ({
             <input
                 className='search-input'
                 type='text'
-                placeholder='Поиск'
+                placeholder='Search'
                 value={searchValue}
                 onChange={(e) => {
                     setSearchValue(e.target.value)

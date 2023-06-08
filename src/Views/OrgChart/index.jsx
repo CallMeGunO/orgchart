@@ -6,7 +6,7 @@ import { chartScaleHandler } from '../../core/helpers/chartEventsHelper'
 import chartDataHelper from '../../core/helpers/chartDataHelper'
 import ExpandContext from '../../core/contexts/ExpandContext'
 
-const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeightsCalculated, setIsHeightsCalculated }) => {
+const OrgChart = ({ data, searchValue, orgDataFull, isHeightsCalculated, setIsHeightsCalculated }) => {
     const [orgData, setOrgData] = useState([])
     const [currentExpandingBlockId, setCurrentExpandingBlockId] = useState(0)
     const [orgDataChangedCount, setOrgDataChangedCount] = useState(0)
@@ -17,7 +17,7 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
 
     const { displayMode, setChartNodeById } = useContext(ExpandContext)
 
-    // let chartScrollPosition = { top: 0, left: 0, x: 0, y: 0 }
+    let chartScrollPosition = { top: 0, left: 0, x: 0, y: 0 }
 
     useEffect(() => {
         if (
@@ -50,12 +50,12 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
 
     useEffect(() => {
         if (Array.isArray(data)) {
-            const orgDataForView = chartDataHelper.setChartExpandedLevels(data, isAllLevelsExpanded)
+            const orgDataForView = chartDataHelper.setChartExpandedLevels(data)
             setIsHeightsCalculated(false)
             setOrgData(orgDataForView)
             setOrgDataChangedCount(orgDataChangedCount + 1)
         }
-    }, [data, isAllLevelsExpanded, displayMode])
+    }, [data, displayMode])
 
     useEffect(() => {
         chartElement.current.scrollLeft = (chartElement.current.scrollWidth - chartElement.current.clientWidth) / 2
@@ -135,7 +135,6 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
                     <li>
                         <div className='chart-node'>
                             {specialEmployee && (
-                                // Золотовицкий
                                 <div className='chart-node special'>
                                     <ChartBlock data={specialEmployee} ref={specialBlockRef} />
                                 </div>
@@ -157,41 +156,41 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
         })
     }
 
-    // const mouseDownHandler = function (e) {
-    //     chartElement.current.style.cursor = 'grabbing'
-    //     chartElement.current.style.userSelect = 'none'
+    const mouseDownHandler = function (e) {
+        chartElement.current.style.cursor = 'grabbing'
+        chartElement.current.style.userSelect = 'none'
 
-    //     chartScrollPosition = {
-    //         left: chartElement.current.scrollLeft,
-    //         top: chartElement.current.scrollTop,
+        chartScrollPosition = {
+            left: chartElement.current.scrollLeft,
+            top: chartElement.current.scrollTop,
 
-    //         x: e.clientX,
-    //         y: e.clientY
-    //     }
+            x: e.clientX,
+            y: e.clientY
+        }
 
-    //     document.addEventListener('mousemove', mouseMoveHandler)
-    //     document.addEventListener('mouseup', mouseUpHandler)
-    // }
+        document.addEventListener('mousemove', mouseMoveHandler)
+        document.addEventListener('mouseup', mouseUpHandler)
+    }
 
-    // const mouseMoveHandler = function (e) {
-    //     const dx = e.clientX - chartScrollPosition.x
-    //     const dy = e.clientY - chartScrollPosition.y
+    const mouseMoveHandler = function (e) {
+        const dx = e.clientX - chartScrollPosition.x
+        const dy = e.clientY - chartScrollPosition.y
 
-    //     chartElement.current.scrollTop = chartScrollPosition.top - dy
-    //     chartElement.current.scrollLeft = chartScrollPosition.left - dx
-    // }
+        chartElement.current.scrollTop = chartScrollPosition.top - dy
+        chartElement.current.scrollLeft = chartScrollPosition.left - dx
+    }
 
-    // const mouseUpHandler = function () {
-    //     chartElement.current.style.cursor = 'grab'
-    //     chartElement.current.style.removeProperty('user-select')
+    const mouseUpHandler = function () {
+        chartElement.current.style.cursor = 'grab'
+        chartElement.current.style.removeProperty('user-select')
 
-    //     document.removeEventListener('mousemove', mouseMoveHandler)
-    //     document.removeEventListener('mouseup', mouseUpHandler)
-    // }
+        document.removeEventListener('mousemove', mouseMoveHandler)
+        document.removeEventListener('mouseup', mouseUpHandler)
+    }
 
-    // const onMouseWheelHandler = (event) => {
-    //     chartScaleHandler(event, chartElement, setChartScaleValue)
-    // }
+    const onMouseWheelHandler = (event) => {
+        chartScaleHandler(event, chartElement, setChartScaleValue)
+    }
 
     return (
         <div className={`${searchValue?.length ? `org-chart-container blur` : 'org-chart-container'}`}>
@@ -199,8 +198,8 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
                 id='orgChartContent'
                 className='org-chart'
                 ref={chartElement}
-                // onMouseDown={mouseDownHandler}
-                // onWheel={onMouseWheelHandler}
+                onMouseDown={mouseDownHandler}
+                onWheel={onMouseWheelHandler}
             >
                 {dataView()}
                 <ScaleControl
@@ -219,7 +218,6 @@ const OrgChart = ({ data, isAllLevelsExpanded, searchValue, orgDataFull, isHeigh
 
 OrgChart.propTypes = {
     data: PropTypes.arrayOf(PropTypes.shape()),
-    isAllLevelsExpanded: PropTypes.bool,
     searchValue: PropTypes.string,
     orgDataFull: PropTypes.arrayOf(PropTypes.shape()),
     isHeightsCalculated: PropTypes.bool,

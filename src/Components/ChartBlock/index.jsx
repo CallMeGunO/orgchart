@@ -5,6 +5,7 @@ import BottomBlock from './BottomBlock'
 import UserInfo from './UserInfo'
 import ExpandContext from '../../core/contexts/ExpandContext'
 import { EmployeesChildren } from './EmployeesChildren'
+import userPhotoDefault from '../../../public/additions/userDefault.jpeg'
 
 const ChartBlock = forwardRef(function ChartBlock(
     { data, setCurrentExpandingBlockId, employeesChildren = [], isOnlyEmployeesChildren, isHeightsCalculated },
@@ -12,7 +13,7 @@ const ChartBlock = forwardRef(function ChartBlock(
 ) {
     const { displayMode } = useContext(ExpandContext)
 
-    const userPhotoDefaultUrl = `${process.env.SITE_URL}${process.env.USER_PHOTO_DEFAULT_URL}`
+    const userPhotoDefaultUrl = userPhotoDefault
 
     const userPhotoUrl = (item) => {
         if (item.photoUrl) {

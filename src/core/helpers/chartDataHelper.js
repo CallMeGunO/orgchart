@@ -3,36 +3,24 @@ import { generateId } from '../utils/generateId'
 class ChartDataHelper {
     defaultExpandedLevelsCount = 3
 
-    getPrepairedChartData(comapnyEmployeesListItems) {
-        const rootItem = comapnyEmployeesListItems.find((item) => !item.FunctionalManager.Id)
+    getPrepairedChartData(users, cities) {
+        const rootItem = users.find((item) => !item.parent)
 
-        const result = (currentEmployee) => {
-            const levelItems = comapnyEmployeesListItems?.filter(
-                (employee) => employee?.FunctionalManager?.Id === currentEmployee.Id
-            )
+        const result = (currentUser) => {
+            const levelItems = users?.filter((user) => user.parent === currentUser.id)
 
             const preparedLevelItems = levelItems.map((levelItem) => {
-                let photoUrl
-                if (levelItem.Photo1) {
-                    photoUrl = levelItem.Photo1.match(/["']serverRelativeUrl["']:\s?["'](.*?)["']/g)[0]
-                        .replace(/['"]/g, '')
-                        .split(':')
-                        .at(-1)
-                }
+                const city = cities.find((item) => item.title === levelItem.city)
+
                 const chartBlock = {
                     id: generateId(),
-                    idSp: levelItem.Id,
-                    parentIdSp: levelItem.FunctionalManager.Id,
-                    department: levelItem.Department,
-                    position: levelItem.OfficialPosition,
-                    fullName: levelItem.Title,
+                    department: levelItem.department,
+                    position: levelItem.position,
+                    fullName: levelItem.name,
                     branch: {
-                        color: levelItem.BranchLookup.Color,
-                        title: levelItem.BranchLookup.Title
+                        color: city.color,
+                        title: city.title
                     },
-                    email: levelItem.Email,
-                    photoUrl: photoUrl,
-                    hideFromPhoneBook: levelItem.HideFromPhoneBook,
                     children: [...result(levelItem)]
                 }
 
@@ -42,27 +30,17 @@ class ChartDataHelper {
             return preparedLevelItems
         }
 
-        let photoUrl
-        if (rootItem.Photo1) {
-            photoUrl = rootItem.Photo1.match(/["']serverRelativeUrl["']:\s?["'](.*?)["']/g)[0]
-                .replace(/['"]/g, '')
-                .split(':')
-                .at(-1)
-        }
+        const rootCity = cities.find((city) => city.title === rootItem.city)
 
         const chartBlock = {
             id: generateId(),
-            idSp: rootItem.Id,
-            parentIdSp: rootItem.FunctionalManager.Id,
-            department: rootItem.Department,
-            position: rootItem.OfficialPosition,
-            fullName: rootItem.Title,
+            department: rootItem.department,
+            position: rootItem.position,
+            fullName: rootItem.name,
             branch: {
-                color: rootItem.BranchLookup.Color,
-                title: rootItem.BranchLookup.Title
+                color: rootCity.color,
+                title: rootCity.title
             },
-            email: rootItem.Email,
-            photoUrl: photoUrl,
             children: [...result(rootItem)]
         }
 
